@@ -1,10 +1,23 @@
 import React, { useRef, useState, useCallback } from "react";
+import produce from "immer";
+
+function createBulkData(size = 2500) {
+  const array = [];
+  for (let i = 0; i < size; i++) {
+    array.push({
+      id: i,
+      name: `${i} 번째`,
+      username: `${i} 님`,
+    });
+  }
+  return array;
+}
 
 function App() {
-  const nextId = useRef(1);
+  const nextId = useRef(2501);
   const [form, setForm] = useState({ name: "", username: "" });
   const [data, setData] = useState({
-    array: [],
+    array: createBulkData(),
     uselessValue: null,
   });
 
@@ -12,10 +25,11 @@ function App() {
     (e) => {
       const { name, value } = e.target;
 
-      setForm({
-        ...form,
-        [name]: [value],
-      });
+      setForm(
+        produce(form, (draft) => {
+          draft[name] = value;
+        })
+      );
     },
     [form]
   );
@@ -28,10 +42,11 @@ function App() {
         username: form.username,
       };
 
-      setData({
-        ...data,
-        array: data.array.concat(info),
-      });
+      setData(
+        produce(data, (draft) => {
+          draft.array.push(info);
+        })
+      );
 
       setForm({
         name: "",
@@ -43,10 +58,14 @@ function App() {
   );
   const onRemove = useCallback(
     (id) => {
-      setData({
-        ...data,
-        array: data.array.filter((info) => info.id !== id),
-      });
+      setData(
+        produce(data, (draft) => {
+          draft.array.splice(
+            draft.array.findIndex((info) => info.id === id),
+            1
+          );
+        })
+      );
     },
     [data]
   );
