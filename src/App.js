@@ -21,18 +21,15 @@ function App() {
     uselessValue: null,
   });
 
-  const onChange = useCallback(
-    (e) => {
-      const { name, value } = e.target;
+  const onChange = useCallback((e) => {
+    const { name, value } = e.target;
 
-      setForm(
-        produce(form, (draft) => {
-          draft[name] = value;
-        })
-      );
-    },
-    [form]
-  );
+    setForm(
+      produce((draft) => {
+        draft[name] = value;
+      })
+    );
+  }, []);
   const onSubmit = useCallback(
     (e) => {
       e.preventDefault();
@@ -43,7 +40,7 @@ function App() {
       };
 
       setData(
-        produce(data, (draft) => {
+        produce((draft) => {
           draft.array.push(info);
         })
       );
@@ -54,21 +51,18 @@ function App() {
       });
       nextId.current += 1;
     },
-    [data, form.name, form.username]
+    [form.name, form.username]
   );
-  const onRemove = useCallback(
-    (id) => {
-      setData(
-        produce(data, (draft) => {
-          draft.array.splice(
-            draft.array.findIndex((info) => info.id === id),
-            1
-          );
-        })
-      );
-    },
-    [data]
-  );
+  const onRemove = useCallback((id) => {
+    setData(
+      produce((draft) => {
+        draft.array.splice(
+          draft.array.findIndex((info) => info.id === id),
+          1
+        );
+      })
+    );
+  }, []);
 
   return (
     <div>
